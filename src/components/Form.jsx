@@ -1,6 +1,12 @@
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { nanoid } from "nanoid";
+import { useContext, useEffect } from "react";
+import MyStore from "../context/MyStore";
 
 const Form = () => {
+  const { users, setUsers, editId, setEditId, setIsFormOpen } =
+    useContext(MyStore);
   const {
     register,
     reset,
@@ -11,9 +17,34 @@ const Form = () => {
   });
 
   const formSubmit = (data) => {
-    console.log(data);
+    if (editId) {
+      setUsers((prev) =>
+        prev.map((item) => (item.id === editId ? { ...item, ...data } : item)),
+      );
+    } else {
+      setUsers((prev) => [...prev, { ...data, id: nanoid() }]);
+      toast.success("Added new User");
+    }
     reset();
+    setEditId(null);
+    setIsFormOpen(false);
   };
+
+  useEffect(() => {
+    if (editId) {
+      const editData = users.find((item) => item.id === editId);
+      if (editData) {
+        reset(editData);
+      } else {
+        reset({
+          name: "",
+          email: "",
+          mobile: "",
+          image: "",
+        });
+      }
+    }
+  }, [editId, users, reset]);
 
   return (
     <section className="mx-auto mt-12 max-w-2xl rounded-2xl border border-slate-200 bg-white p-8 shadow-lg">
@@ -125,7 +156,7 @@ const Form = () => {
           type="submit"
           className="w-full rounded-lg bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-700"
         >
-          Create Profile
+          {editId ? "Update Profile" : "Create Profile"}
         </button>
       </form>
     </section>
