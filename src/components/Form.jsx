@@ -22,7 +22,10 @@ const Form = () => {
         prev.map((item) => (item.id === editId ? { ...item, ...data } : item)),
       );
     } else {
-      setUsers((prev) => [...prev, { ...data, id: nanoid() }]);
+      setUsers((prev) => [
+        ...prev,
+        { ...data, id: nanoid(), isFavorite: false },
+      ]);
       toast.success("Added new User");
     }
     reset();

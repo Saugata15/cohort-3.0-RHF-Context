@@ -1,10 +1,10 @@
-import { Mail, Phone, SquarePen, Trash2 } from "lucide-react";
+import { Mail, Phone, SquarePen, Trash2, Heart } from "lucide-react";
 import { useContext, useState } from "react";
 import MyStore from "../context/MyStore";
 
 const UserCard = ({ user }) => {
   const [imageError, setImageError] = useState(false);
-  const { setUsers, setEditId , setIsFormOpen } = useContext(MyStore);
+  const { setUsers, setEditId, setIsFormOpen } = useContext(MyStore);
 
   const deleteUser = (id) => {
     return setUsers((prev) => prev.filter((item) => item.id !== id));
@@ -15,18 +15,39 @@ const UserCard = ({ user }) => {
     setIsFormOpen(true);
   };
 
+  const toggleFavorite = (id) => {
+    return setUsers((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, isFavorite: !item.isFavorite } : item,
+      ),
+    );
+  };
+
   return (
     <article
       className="overflow-hidden rounded-2xl border border-slate-200 
     bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
     >
       {/* Top Section */}
-      <div className="bg-gradient-to-r from-indigo-500 to-violet-500 p-6">
+      <div className="relative bg-gradient-to-r from-indigo-500 to-violet-500 p-6">
+        {/* Favorite Button */}
+        <button
+          onClick={() => toggleFavorite(user.id)}
+          className="absolute right-4 top-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/90 shadow-md transition hover:scale-110"
+        >
+          <Heart
+            size={20}
+            className={
+              user.isFavorite ? "fill-red-500 text-red-500" : "text-slate-500"
+            }
+          />
+        </button>
+
         <div className="flex justify-center">
           {imageError ? (
             <div
-              className="flex h-28 w-28 items-center justify-center rounded-full 
-            border-4 border-white bg-white text-4xl font-bold text-indigo-600 shadow-lg"
+              className="flex h-28 w-28 items-center justify-center rounded-full
+        border-4 border-white bg-white text-4xl font-bold text-indigo-600 shadow-lg"
             >
               {user.name.charAt(0).toUpperCase()}
             </div>

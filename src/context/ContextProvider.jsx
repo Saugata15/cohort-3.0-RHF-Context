@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MyStore from "./MyStore";
 
 const ContextProvider = ({ children }) => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("users")) || [];
+    } catch {
+      return [];
+    }
+  });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editId, setEditId] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem("users", JSON.stringify(users));
+  }, [users]);
 
   return (
     <MyStore.Provider
